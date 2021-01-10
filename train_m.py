@@ -28,7 +28,7 @@ def get_selected(data=None,freq = None, sec=None):
         print('sec not specified')
         return data 
 
-def male_cv(alpha):
+def male_cv(alpha=None):
     data_dict = mat73.loadmat("./data/Emotrans1_Boy_data_preprocessed.mat", use_attrdict=True)
     arr = np.array(data_dict["All_Feature"])
     pos = [[0,0],[0,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3]]
@@ -50,7 +50,7 @@ def male_cv(alpha):
     y = np.concatenate((np.ones((18,96)),np.zeros((18,96))),axis=1)
     alphas = [0.1,0.01,0.001]
     for a in alphas:
-        model = LogisticRegression(C=a, max_iter=1000,penalty='l1',solver='saga')
+        model = LogisticRegression(C=a, max_iter=10000,penalty='l1',solver='saga')
         iter = 0
         train_scores=[]
         test_scores = []
@@ -90,7 +90,6 @@ def male_cv(alpha):
 def male_ex():
     #,0.001
     alphas = [0.1,0.01,0.001]
-    for i in alphas:
-        male_cv(i)
+    male_cv()
 
 male_ex() 
