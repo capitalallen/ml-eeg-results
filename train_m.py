@@ -48,9 +48,9 @@ def male_cv(alpha=None):
     iter = 0
     raw_data = np.concatenate((pos_df,neg_df),axis=1).reshape(18,192,128*8)
     y = np.concatenate((np.ones((18,96)),np.zeros((18,96))),axis=1)
-    alphas = [0.1,0.01,0.001]
+    alphas = [10,100,1000]
     for a in alphas:
-        model = LogisticRegression(C=a, max_iter=10000,penalty='l1',solver='saga')
+        model = LogisticRegression(C=a, max_iter=500,penalty='l1',solver='saga')
         iter = 0
         train_scores=[]
         test_scores = []
