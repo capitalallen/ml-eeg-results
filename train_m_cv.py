@@ -6,6 +6,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.utils import shuffle
+from sklearn.model_selection import cross_val_score
 def get_pos_or_neg(data,position):
     arr = []
     index = 0
@@ -48,48 +49,19 @@ def male_cv(alpha=None):
     iter = 0
     raw_data = np.concatenate((pos_df,neg_df),axis=1).reshape(18,192,128*8)
     y = np.concatenate((np.ones((18,96)),np.zeros((18,96))),axis=1)
+    x = raw_data.reshape(18*192,1024)
+    y = y.reshape(18*192)
     alphas = [10,100,1000]
     for a in alphas:
-        model = LogisticRegression(C=a, max_iter=10000,penalty='l1',solver='saga')
-        iter = 0
-        train_scores=[]
-        test_scores = []
-        coefs = []
-        for i in range(17):
-            print(iter)
-            iter+=1
-            x_train,x_test = np.concatenate((raw_data[:i],raw_data[i+1:])).reshape(17*192,1024),raw_data[i].reshape(192,1024)
-            y_train,y_test = np.concatenate((y[:i],y[i+1:])).reshape(17*192),y[i].reshape(192)
-            x_train,y_train = shuffle(x_train,y_train)
-            model.fit(x_train, y_train)
-            # training loss
-            pred_train_lasso= model.predict(x_train)
-            temp = accuracy_score(y_train,pred_train_lasso)
-            print("training accuracy: ",temp)
-            train_scores.append(temp)
-
-            #testing 
-            pred_test_lasso= model.predict(x_test)
-            temp = accuracy_score(y_test,pred_test_lasso)
-            print("testing accuracy: ",temp)
-            test_scores.append(temp)
-            
-            coefs = model.coef_
-        with open('boy_with_acc'+str(a)+".txt",'w') as f:
-            f.write("accuracy - training")
-            f.write(str(train_scores))
-            f.write("\n accuracy - testing")
-            f.write(str(test_scores))
-
-            f.write("\ncoefs ")
-            for c in coefs[0]:
-                f.write(str(c)+",")
-        print(train_scores)
-        print(test_scores)
-        print(coefs)
+        model = LogisticRegression(C=a, max_iter=5000,penalty='l1',solver='saga')
+        scores = cross_val_score(model,x,y,cv=5)
+        with open('boy_with_acc_cv'+str(a)+".txt",'w') as f:
+            f.write("accuracy:")
+            for i in scores:
+                f.write(str(i)+" ,")
+        print(scores)
 def male_ex():
     #,0.001
-    alphas = [0.1,0.01,0.001]
     male_cv()
 
 male_ex() 
