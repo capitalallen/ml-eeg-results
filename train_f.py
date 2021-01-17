@@ -43,7 +43,7 @@ def male_cv(alpha=None):
     train_scores=[]
     test_scores = []
     iter = 0
-    alphas = [0.01,0.001]
+    alphas = [10,100,1000]
     coefs = []
     for a in alphas:
         # ,max_iter=int(1e6)
